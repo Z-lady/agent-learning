@@ -1,7 +1,7 @@
 {
-  "name": "rag-agent",
+  "name": "web-search-agent",
   "version": "1.0.0",
-  "description": "Step 6 — RAG: Chat with your own documents",
+  "description": "Web Search Agent powered by OpenRouter (free!)",
   "type": "module",
   "scripts": {
     "dev": "tsx watch ./server.ts",
