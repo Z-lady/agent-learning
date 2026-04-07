@@ -1,0 +1,1307 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+public/
+  index.html
+agents.ts
+package.json
+README.md
+server.ts
+tsconfig.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="public/index.html">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-Agent Research System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #f7f4ef;
+      --white:    #fdfbf8;
+      --ink:      #1c1814;
+      --ink2:     #3d3830;
+      --muted:    #9a9088;
+      --border:   #e0d8d0;
+
+      --orch:     #1c3d5a;   /* orchestrator — deep navy */
+      --res:      #b85c2a;   /* researcher   — burnt orange */
+      --ana:      #2a6b4a;   /* analyst      — forest green */
+      --wri:      #6b2a8a;   /* writer       — deep purple */
+
+      --mono: 'DM Mono', monospace;
+      --serif: 'Playfair Display', serif;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--ink);
+      color: var(--white);
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-title {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .header-title span { color: #f0c060; }
+
+    .header-sub {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #666;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .step-badge {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: #f0c060;
+      border: 1px solid #f0c060;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── LAYOUT ── */
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 36px 32px 80px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 32px;
+    }
+
+    /* ── LEFT COLUMN ── */
+    .left { display: flex; flex-direction: column; gap: 24px; }
+
+    /* ── PIPELINE DIAGRAM ── */
+    .pipeline {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .pipeline-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .pipeline-flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .agent-node {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 8px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .agent-node.active {
+      border-color: currentColor;
+      background: var(--white);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transform: translateY(-3px);
+    }
+
+    .agent-node.done {
+      border-color: currentColor;
+      opacity: 0.7;
+    }
+
+    .agent-node.idle { opacity: 0.4; }
+
+    .node-icon { font-size: 28px; }
+    .node-name {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .node-status {
+      font-size: 11px;
+      font-family: var(--mono);
+      opacity: 0.7;
+    }
+
+    .node-tick {
+      position: absolute;
+      top: -8px; right: -8px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: #2a6b4a;
+      color: white;
+      font-size: 11px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .agent-node.done .node-tick { display: flex; }
+
+    .pipeline-arrow {
+      font-size: 20px;
+      color: var(--muted);
+      flex-shrink: 0;
+      padding: 0 4px;
+      transition: color 0.3s;
+    }
+
+    .pipeline-arrow.active { color: var(--ink); }
+
+    /* node colors */
+    .n-orch { color: var(--orch); }
+    .n-res  { color: var(--res);  }
+    .n-ana  { color: var(--ana);  }
+    .n-wri  { color: var(--wri);  }
+
+    /* ── INPUT ── */
+    .input-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .input-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .input-row { display: flex; gap: 10px; }
+
+    #requestInput {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    #requestInput:focus { border-color: var(--ink); }
+    #requestInput::placeholder { color: var(--muted); }
+
+    #runBtn {
+      background: var(--ink);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      padding: 12px 24px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    #runBtn:hover { background: #333; transform: translateY(-1px); }
+    #runBtn:disabled { background: var(--muted); cursor: not-allowed; transform: none; }
+
+    .presets {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .preset {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--bg);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .preset:hover { border-color: var(--ink); color: var(--ink); }
+
+    /* ── REPORT OUTPUT ── */
+    .report-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .report-card.visible { display: block; }
+
+    .report-head {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .report-body {
+      padding: 28px;
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--ink2);
+    }
+
+    .report-body h2 {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 20px 0 8px;
+    }
+
+    .report-body h2:first-child { margin-top: 0; }
+
+    .report-body p { margin-bottom: 12px; }
+
+    .report-body ul {
+      margin: 8px 0 12px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .report-body strong { font-weight: 600; color: var(--ink); }
+
+    .report-body code {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: var(--bg);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    /* ── RIGHT SIDEBAR — Activity Log ── */
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+    .log-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      position: sticky;
+      top: 20px;
+    }
+
+    .log-head {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #activityLog {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 520px;
+      overflow-y: auto;
+    }
+
+    #activityLog::-webkit-scrollbar { width: 3px; }
+    #activityLog::-webkit-scrollbar-thumb { background: var(--border); }
+
+    .log-entry {
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      animation: fadeUp 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .log-entry.orchestrator { background: #eef2f7; border-color: #c8d8e8; color: var(--orch); }
+    .log-entry.researcher   { background: #fdf3ee; border-color: #f0d0bc; color: var(--res); }
+    .log-entry.analyst      { background: #eef7f2; border-color: #bce0ce; color: var(--ana); }
+    .log-entry.writer       { background: #f5eef9; border-color: #dcc8ec; color: var(--wri); }
+    .log-entry.done         { background: #eef7f2; border-color: #bce0ce; color: var(--ana); }
+    .log-entry.error        { background: #fdeeed; border-color: #f0bcbc; color: #b82a2a; }
+
+    .log-who {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+      opacity: 0.7;
+    }
+
+    /* ── HOW IT WORKS BOX ── */
+    .how-it-works {
+      background: var(--ink);
+      color: var(--white);
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .how-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #f0c060;
+      margin-bottom: 12px;
+    }
+
+    .how-step {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      color: #ccc;
+    }
+
+    .how-num {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: #f0c060;
+      flex-shrink: 0;
+      padding-top: 1px;
+    }
+
+    /* ── SPINNER ── */
+    .spinner-inline {
+      display: inline-block;
+      width: 10px; height: 10px;
+      border: 2px solid rgba(0,0,0,0.1);
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── KEY MISSING ── */
+    .key-warn {
+      background: #fdeeed;
+      border: 1px solid #f0bcbc;
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 13px;
+      color: #b82a2a;
+      display: none;
+    }
+
+    .key-warn.visible { display: block; }
+    .key-warn code { font-family: var(--mono); font-size: 11px; background: #f8e8e8; padding: 2px 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="header-title">Multi-<span>Agent</span> Research</div>
+    <div class="header-sub" style="margin-top:3px">Orchestrator + 3 Specialist Agents</div>
+  </div>
+  <div class="step-badge">STEP 5</div>
+</header>
+
+<div class="page">
+
+  <!-- LEFT COLUMN -->
+  <div class="left">
+
+    <!-- Pipeline diagram -->
+    <div class="pipeline">
+      <div class="pipeline-title">Agent Pipeline</div>
+      <div class="pipeline-flow">
+
+        <div class="agent-node n-orch idle" id="node-orch">
+          <div class="node-tick">✓</div>
+          <div class="node-icon">🧠</div>
+          <div class="node-name">Orchestrator</div>
+          <div class="node-status" id="ns-orch">waiting</div>
+        </div>
+
+        <div class="pipeline-arrow" id="arr-1">→</div>
+
+        <div class="agent-node n-res idle" id="node-res">
+          <div class="node-tick">✓</div>
+          <div class="node-icon">🔍</div>
+          <div class="node-name">Researcher</div>
+          <div class="node-status" id="ns-res">waiting</div>
+        </div>
+
+        <div class="pipeline-arrow" id="arr-2">→</div>
+
+        <div class="agent-node n-ana idle" id="node-ana">
+          <div class="node-tick">✓</div>
+          <div class="node-icon">📊</div>
+          <div class="node-name">Analyst</div>
+          <div class="node-status" id="ns-ana">waiting</div>
+        </div>
+
+        <div class="pipeline-arrow" id="arr-3">→</div>
+
+        <div class="agent-node n-wri idle" id="node-wri">
+          <div class="node-tick">✓</div>
+          <div class="node-icon">✍️</div>
+          <div class="node-name">Writer</div>
+          <div class="node-status" id="ns-wri">waiting</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Key warning -->
+    <div class="key-warn" id="keyWarn">
+      ⚠️ API keys missing — edit <code>.env</code> and restart: <code>npm run dev</code>
+    </div>
+
+    <!-- Input -->
+    <div class="input-card">
+      <span class="input-label">Research Request</span>
+      <div class="input-row">
+        <input id="requestInput" type="text"
+          placeholder="e.g. Research TypeScript 5.0 and write a report"
+          value="Research the current state of AI agents in 2025 and write a report" />
+        <button id="runBtn">▶ Run Pipeline</button>
+      </div>
+      <div class="presets">
+        <button class="preset" onclick="setQ('Research the current state of AI agents in 2025 and write a report')">AI agents 2025</button>
+        <button class="preset" onclick="setQ('Research Next.js 15 features and write a summary')">Next.js 15</button>
+        <button class="preset" onclick="setQ('Research the latest developments in quantum computing')">Quantum computing</button>
+        <button class="preset" onclick="setQ('Research TypeScript 5.0 new features and write a developer guide')">TypeScript 5.0</button>
+      </div>
+    </div>
+
+    <!-- Report output -->
+    <div class="report-card" id="reportCard">
+      <div class="report-head">
+        📄 Final Report — compiled by Writer Agent
+      </div>
+      <div class="report-body" id="reportBody"></div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT SIDEBAR -->
+  <div class="sidebar">
+
+    <div class="log-card">
+      <div class="log-head">
+        ⚡ Live Activity
+      </div>
+      <div id="activityLog">
+        <div class="log-entry orchestrator">
+          <div class="log-who">System</div>
+          Waiting for request...
+        </div>
+      </div>
+    </div>
+
+    <div class="how-it-works">
+      <div class="how-title">How it works</div>
+      <div class="how-step">
+        <span class="how-num">01</span>
+        <span><strong style="color:#fff">Orchestrator</strong> receives your request, extracts the topic, and coordinates the pipeline</span>
+      </div>
+      <div class="how-step">
+        <span class="how-num">02</span>
+        <span><strong style="color:#fff">Researcher</strong> calls Tavily to search the web, then organizes raw facts into bullet points</span>
+      </div>
+      <div class="how-step">
+        <span class="how-num">03</span>
+        <span><strong style="color:#fff">Analyst</strong> reads the research and extracts the 3–5 most important insights</span>
+      </div>
+      <div class="how-step">
+        <span class="how-num">04</span>
+        <span><strong style="color:#fff">Writer</strong> turns insights into a structured markdown report with clear sections</span>
+      </div>
+      <div class="how-step">
+        <span class="how-num">05</span>
+        <span><strong style="color:#fff">Orchestrator</strong> returns the final report — 4 AI calls, 1 result</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────
+const runBtn   = document.getElementById('runBtn');
+const inputEl  = document.getElementById('requestInput');
+const logEl    = document.getElementById('activityLog');
+const reportCard = document.getElementById('reportCard');
+const reportBody = document.getElementById('reportBody');
+
+// ── STARTUP CHECK ─────────────────────────────────────────
+(async () => {
+  try {
+    const r = await fetch('/api/check');
+    const d = await r.json();
+    if (!d.ok) {
+      document.getElementById('keyWarn').classList.add('visible');
+      runBtn.disabled = true;
+    }
+  } catch {}
+})();
+
+// ── NODE STATE HELPERS ────────────────────────────────────
+const nodeMap = {
+  orchestrator: 'node-orch',
+  researcher:   'node-res',
+  analyst:      'node-ana',
+  writer:       'node-wri',
+};
+
+const statusMap = {
+  orchestrator: 'ns-orch',
+  researcher:   'ns-res',
+  analyst:      'ns-ana',
+  writer:       'ns-wri',
+};
+
+function setNode(agent, state, statusText) {
+  const id  = nodeMap[agent]; if (!id) return;
+  const sid = statusMap[agent];
+  const el  = document.getElementById(id);
+  const sel = document.getElementById(sid);
+  el.className = el.className.replace(/\b(idle|active|done)\b/g, '').trim() + ' ' + state;
+  if (sel) sel.textContent = statusText;
+}
+
+function resetNodes() {
+  Object.keys(nodeMap).forEach(a => setNode(a, 'idle', 'waiting'));
+  ['arr-1','arr-2','arr-3'].forEach(id => {
+    document.getElementById(id).classList.remove('active');
+  });
+}
+
+function activateArrow(n) {
+  document.getElementById(`arr-${n}`)?.classList.add('active');
+}
+
+// ── LOG HELPER ────────────────────────────────────────────
+function addLog(type, who, msg) {
+  const d = document.createElement('div');
+  d.className = `log-entry ${type}`;
+  d.innerHTML = `<div class="log-who">${who}</div>${msg}`;
+  logEl.appendChild(d);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+// ── MARKDOWN RENDERER ─────────────────────────────────────
+function renderMarkdown(text) {
+  return text
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^### (.+)$/gm, '<h3 style="font-family:var(--mono);font-size:13px;margin:14px 0 5px;color:var(--ink)">$1</h3>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/`(.*?)`/g, '<code>$1</code>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs, m => `<ul>${m}</ul>`)
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^(?!<[hup])/gm, '')
+    .replace(/\n/g, '<br>');
+}
+
+// ── MAIN RUN ──────────────────────────────────────────────
+async function run() {
+  const request = inputEl.value.trim();
+  if (!request) return;
+
+  // Reset UI
+  runBtn.disabled = true;
+  logEl.innerHTML = '';
+  reportCard.classList.remove('visible');
+  reportBody.innerHTML = '';
+  resetNodes();
+
+  setNode('orchestrator', 'active', 'planning...');
+  addLog('orchestrator', '🧠 Orchestrator', 'Starting pipeline...');
+
+  try {
+    const resp = await fetch('/api/research', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ request }),
+    });
+
+    const reader = resp.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split('\n');
+      buf = lines.pop();
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        let ev;
+        try { ev = JSON.parse(line.slice(6)); } catch { continue; }
+
+        // ── Handle each event ──────────────────────────
+        if (ev.type === 'orchestrator') {
+          setNode('orchestrator', 'active', 'coordinating');
+          addLog('orchestrator', '🧠 Orchestrator', ev.message);
+        }
+
+        else if (ev.type === 'agent_start') {
+          const icons = { researcher:'🔍', analyst:'📊', writer:'✍️' };
+          setNode(ev.agent, 'active', 'working...');
+
+          // light up the arrow before this agent
+          if (ev.agent === 'researcher') activateArrow(1);
+          if (ev.agent === 'analyst')    activateArrow(2);
+          if (ev.agent === 'writer')     activateArrow(3);
+
+          addLog(ev.agent, `${icons[ev.agent] || '🤖'} ${ev.agent.charAt(0).toUpperCase()+ev.agent.slice(1)}`,
+            `<span class="spinner-inline"></span>${ev.task}`);
+        }
+
+        else if (ev.type === 'agent_done') {
+          setNode(ev.agent, 'done', 'done ✓');
+          addLog('done', `✓ ${ev.agent}`, `Completed. Preview: ${ev.preview}`);
+        }
+
+        else if (ev.type === 'final_report') {
+          setNode('orchestrator', 'done', 'done ✓');
+          reportCard.classList.add('visible');
+          reportBody.innerHTML = `<p>${renderMarkdown(ev.report)}</p>`;
+          addLog('done', '🎉 Pipeline', 'All agents complete — report ready!');
+          reportCard.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        else if (ev.type === 'error') {
+          addLog('error', '⚠️ Error', ev.message);
+        }
+      }
+    }
+  } catch (err) {
+    addLog('error', '⚠️ Network', err.message);
+  }
+
+  runBtn.disabled = false;
+}
+
+function setQ(q) { inputEl.value = q; inputEl.focus(); }
+
+runBtn.addEventListener('click', run);
+inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') run(); });
+</script>
+</body>
+</html>
+</file>
+
+<file path="agents.ts">
+// ============================================================
+// 🤖 agents.ts — Multi-Agent System (Step 5)
+//
+// This file contains 5 "agents" — each is just an AI call
+// with a different system prompt and purpose:
+//
+//   callAI()          — shared helper, calls OpenRouter
+//   researcherAgent() — searches the web for raw facts
+//   analystAgent()    — extracts key insights from research
+//   writerAgent()     — turns insights into a polished report
+//   orchestrator()    — the BOSS: plans, delegates, combines
+//
+// KEY INSIGHT:
+//   An "agent" is not a special object or class.
+//   It's just an AI call with a focused system prompt.
+//   The "multi" in multi-agent just means you chain them.
+// ============================================================
+
+// ─────────────────────────────────────────────────────────────
+// Types
+// ─────────────────────────────────────────────────────────────
+
+export type AgentEvent =
+  | { type: "orchestrator"; message: string }
+  | { type: "agent_start";  agent: string; task: string }
+  | { type: "agent_done";   agent: string; preview: string }
+  | { type: "final_report"; report: string }
+  | { type: "error";        message: string };
+
+// ─────────────────────────────────────────────────────────────
+// 🔌 BASE: callAI
+//
+// Every agent uses this same function.
+// The ONLY difference between agents is the `systemPrompt`.
+// That's the whole secret of multi-agent systems.
+// ─────────────────────────────────────────────────────────────
+async function callAI(
+  systemPrompt: string,
+  userMessage: string,
+  apiKey: string
+): Promise<string> {
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": "http://localhost:3002",
+      "X-Title": "Multi-Agent System",
+    },
+    body: JSON.stringify({
+      model: "openrouter/auto",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user",   content: userMessage  },
+      ],
+      max_tokens: 1024,
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`API error ${response.status}: ${err}`);
+  }
+
+  const data = await response.json() as {
+    choices: Array<{ message: { content: string } }>;
+  };
+
+  return data.choices[0].message.content ?? "(no response)";
+}
+
+// ─────────────────────────────────────────────────────────────
+// 🔍 SUB-AGENT 1: Researcher
+//
+// Specialty: web search — finds raw facts and sources.
+// Has access to Tavily search API.
+// Returns: bullet points of facts with source URLs.
+//
+// System prompt focus: "search thoroughly, cite everything,
+// return raw facts — don't analyze or write prose"
+// ─────────────────────────────────────────────────────────────
+async function researcherAgent(
+  topic: string,
+  apiKey: string,
+  tavilyKey: string
+): Promise<string> {
+  // First do the actual web search
+  const searchRes = await fetch("https://api.tavily.com/search", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${tavilyKey}`,
+    },
+    body: JSON.stringify({
+      query: topic,
+      search_depth: "basic",
+      max_results: 6,
+      include_answer: true,
+    }),
+  });
+
+  const searchData = await searchRes.json() as {
+    answer?: string;
+    results?: Array<{ title: string; url: string; content: string }>;
+  };
+
+  const rawResults = [
+    searchData.answer ? `Overview: ${searchData.answer}` : "",
+    ...(searchData.results ?? []).map(
+      (r, i) => `[${i+1}] ${r.title}\nURL: ${r.url}\n${r.content.slice(0, 400)}`
+    ),
+  ].filter(Boolean).join("\n\n");
+
+  // Then pass raw results to the Researcher AI to organize them
+  return callAI(
+    `You are a meticulous research agent. Your ONLY job is to extract and
+organize factual information from search results. 
+Rules:
+- Return ONLY facts found in the provided search results
+- Format as clear bullet points grouped by theme
+- Include source URLs for every fact
+- Do NOT analyze, interpret, or add your own knowledge
+- Do NOT write prose paragraphs — only bullet points
+- If something is unclear from the results, say so`,
+    `Topic: ${topic}\n\nSearch results to organize:\n${rawResults}`,
+    apiKey
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// 📊 SUB-AGENT 2: Analyst
+//
+// Specialty: extracting meaning from raw research.
+// Takes the researcher's bullet points and finds patterns,
+// significance, and key takeaways.
+//
+// System prompt focus: "think critically, find what matters,
+// identify themes — don't just repeat facts"
+// ─────────────────────────────────────────────────────────────
+async function analystAgent(
+  topic: string,
+  research: string,
+  apiKey: string
+): Promise<string> {
+  return callAI(
+    `You are a sharp analyst agent. You receive raw research and extract
+the most important insights.
+Rules:
+- Identify the 3-5 most significant findings
+- Explain WHY each finding matters
+- Note any contradictions or gaps in the research
+- Group related points into themes
+- Be opinionated — say what is most important and why
+- Keep each insight to 2-3 sentences maximum
+- Do NOT just repeat facts — add analytical value`,
+    `Topic: ${topic}\n\nRaw research to analyze:\n${research}`,
+    apiKey
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// ✍️  SUB-AGENT 3: Writer
+//
+// Specialty: turning analyzed insights into a readable report.
+// Takes the analyst's insights and produces polished prose.
+//
+// System prompt focus: "write clearly for a smart non-expert,
+// structure well, make it genuinely useful"
+// ─────────────────────────────────────────────────────────────
+async function writerAgent(
+  topic: string,
+  insights: string,
+  apiKey: string
+): Promise<string> {
+  return callAI(
+    `You are an expert writer agent. You turn analytical insights into
+a clear, well-structured report for a smart non-expert reader.
+Rules:
+- Start with a 2-sentence executive summary
+- Use clear section headers (##)
+- Write in plain, direct English — no jargon without explanation
+- Each section should be 2-4 sentences
+- End with a "Key Takeaways" section (3 bullet points)
+- Total length: 300-500 words
+- Format: clean markdown`,
+    `Topic: ${topic}\n\nInsights to write up:\n${insights}`,
+    apiKey
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// 🧠 ORCHESTRATOR
+//
+// The boss agent. Does NOT do any research, analysis, or writing.
+// Its only job is to:
+//   1. Understand what the user wants
+//   2. Decide which agents to call and in what order
+//   3. Pass results between agents
+//   4. Return the final combined output
+//
+// This is an async generator so we can stream each step
+// to the browser in real time as agents complete.
+//
+// NOTICE: The orchestrator calls agents SEQUENTIALLY here:
+//   researcher → analyst → writer
+// In production you'd run independent agents in PARALLEL
+// with Promise.all() — but sequential is easier to learn first.
+// ─────────────────────────────────────────────────────────────
+export async function* orchestrate(
+  userRequest: string,
+  apiKey: string,
+  tavilyKey: string
+): AsyncGenerator<AgentEvent> {
+
+  // Step 1 — Orchestrator plans the work
+  yield {
+    type: "orchestrator",
+    message: `Analyzing request: "${userRequest}" → delegating to 3 specialist agents...`,
+  };
+
+  // Step 2 — Extract the research topic using AI
+  // (handles cases where user says "write me a report about X"
+  //  vs just "X" vs a complex multi-part request)
+  const topic = await callAI(
+    `Extract the core research topic from the user's request.
+Return ONLY the topic as a short phrase — nothing else.
+Examples:
+  "Research Tesla and write a report" → "Tesla company"
+  "What's happening with AI in 2025?" → "AI developments 2025"
+  "Tell me about React 19" → "React 19 features"`,
+    userRequest,
+    apiKey
+  );
+
+  yield {
+    type: "orchestrator",
+    message: `Identified topic: "${topic.trim()}" — starting pipeline...`,
+  };
+
+  // ── AGENT 1: Researcher ─────────────────────────────────
+  yield { type: "agent_start", agent: "researcher", task: `Search web for: "${topic.trim()}"` };
+
+  let research: string;
+  try {
+    research = await researcherAgent(topic.trim(), apiKey, tavilyKey);
+    yield {
+      type: "agent_done",
+      agent: "researcher",
+      preview: research.slice(0, 180) + "...",
+    };
+  } catch (err) {
+    yield { type: "error", message: `Researcher failed: ${err instanceof Error ? err.message : err}` };
+    return;
+  }
+
+  // ── AGENT 2: Analyst ────────────────────────────────────
+  yield { type: "agent_start", agent: "analyst", task: "Extract key insights from research" };
+
+  let insights: string;
+  try {
+    insights = await analystAgent(topic.trim(), research, apiKey);
+    yield {
+      type: "agent_done",
+      agent: "analyst",
+      preview: insights.slice(0, 180) + "...",
+    };
+  } catch (err) {
+    yield { type: "error", message: `Analyst failed: ${err instanceof Error ? err.message : err}` };
+    return;
+  }
+
+  // ── AGENT 3: Writer ─────────────────────────────────────
+  yield { type: "agent_start", agent: "writer", task: "Write final report from insights" };
+
+  let report: string;
+  try {
+    report = await writerAgent(topic.trim(), insights, apiKey);
+    yield {
+      type: "agent_done",
+      agent: "writer",
+      preview: report.slice(0, 180) + "...",
+    };
+  } catch (err) {
+    yield { type: "error", message: `Writer failed: ${err instanceof Error ? err.message : err}` };
+    return;
+  }
+
+  // ── Orchestrator combines everything ────────────────────
+  yield {
+    type: "orchestrator",
+    message: "All agents complete — compiling final report...",
+  };
+
+  yield { type: "final_report", report };
+}
+</file>
+
+<file path="package.json">
+{
+  "name": "multi-agent",
+  "version": "1.0.0",
+  "description": "Step 5 — Multi-Agent: Orchestrator + Specialist Sub-Agents",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch ./server.ts",
+    "start": "tsx ./server.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+</file>
+
+<file path="README.md">
+# 🤖 Multi-Agent Research System (Step 5)
+
+An orchestrator delegates to 3 specialist sub-agents to research
+any topic and produce a structured report.
+
+## Project Structure
+
+```
+multi-agent/
+├── src/
+│   ├── agents.ts   ← 🧠 All agents + orchestrator logic
+│   └── server.ts   ← 🌐 Express server + SSE streaming
+├── public/
+│   └── index.html  ← 🎨 Pipeline visualization UI
+├── .env
+└── package.json
+```
+
+## Setup
+
+```bash
+# 1. Install
+npm install
+
+# 2. Add your keys to .env (same keys as web-search-agent!)
+OPENROUTER_API_KEY=sk-or-v1-...
+TAVILY_API_KEY=tvly-...
+
+# 3. Run (port 3002 — different from your other project!)
+npm run dev
+
+# 4. Open
+http://localhost:3002
+```
+
+---
+
+## The Pipeline
+
+```
+User Request
+     ↓
+Orchestrator  — extracts topic, coordinates pipeline
+     ↓
+Researcher    — searches web (Tavily), organizes facts
+     ↓
+Analyst       — extracts 3-5 key insights from research
+     ↓
+Writer        — writes structured markdown report
+     ↓
+Final Report
+```
+
+## Key Lesson
+
+Each "agent" is just `callAI()` with a different system prompt.
+That's it. The power comes from:
+
+1. **Specialization** — each agent does ONE thing well
+2. **Chaining** — output of one becomes input of the next
+3. **Separation** — the orchestrator never does the actual work
+
+## The ONE function that powers everything
+
+```ts
+async function callAI(systemPrompt, userMessage, apiKey) {
+  // calls OpenRouter with different system prompts
+  // that's ALL an "agent" is
+}
+```
+
+## Next Step → Step 6: RAG
+
+Give your agent a folder of your own documents and let it
+answer questions by searching through them.
+</file>
+
+<file path="server.ts">
+// ============================================================
+// 🌐 server.ts — Multi-Agent Server
+// Runs on port 3002 (so it doesn't clash with your other project)
+// ============================================================
+
+import "dotenv/config";
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import { orchestrate } from "./agents.js";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const app = express();
+const PORT = 3002;
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "./public")));
+
+// Health check — verifies both API keys are set
+app.get("/api/check", (_req, res) => {
+  const orKey = process.env.OPENROUTER_API_KEY ?? "";
+  const tvKey = process.env.TAVILY_API_KEY ?? "";
+  res.json({
+    ok: orKey.startsWith("sk-or-") && tvKey.startsWith("tvly-"),
+    openrouter: orKey.startsWith("sk-or-"),
+    tavily: tvKey.startsWith("tvly-"),
+  });
+});
+
+// Main endpoint — runs the multi-agent pipeline, streams events back
+app.post("/api/research", async (req, res) => {
+  const orKey = process.env.OPENROUTER_API_KEY ?? "";
+  const tvKey = process.env.TAVILY_API_KEY ?? "";
+
+  if (!orKey.startsWith("sk-or-")) {
+    res.status(401).json({ error: "OPENROUTER_API_KEY not set" });
+    return;
+  }
+  if (!tvKey.startsWith("tvly-")) {
+    res.status(401).json({ error: "TAVILY_API_KEY not set" });
+    return;
+  }
+
+  const { request } = req.body as { request: string };
+
+  // SSE — stream each agent's progress in real time
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders();
+
+  const send = (data: object) => res.write(`data: ${JSON.stringify(data)}\n\n`);
+
+  try {
+    for await (const event of orchestrate(request, orKey, tvKey)) {
+      send(event);
+    }
+  } catch (err: unknown) {
+    send({
+      type: "error",
+      message: err instanceof Error ? err.message : "Unknown error",
+    });
+  }
+
+  res.end();
+});
+
+app.listen(PORT, () => {
+  const orKey = process.env.OPENROUTER_API_KEY ?? "";
+  const tvKey = process.env.TAVILY_API_KEY ?? "";
+  console.log(`
+╔══════════════════════════════════════════════╗
+║       🤖  Multi-Agent System                 ║
+╠══════════════════════════════════════════════╣
+║  URL        →  http://localhost:${PORT}          ║
+║  OpenRouter →  ${orKey.startsWith("sk-or-") ? "✅ found" : "❌ NOT SET"}
+║  Tavily     →  ${tvKey.startsWith("tvly-") ? "✅ found" : "❌ NOT SET"}
+╚══════════════════════════════════════════════╝
+  `);
+});
+</file>
+
+<file path="tsconfig.json">
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "strict": true,
+        "outDir": "dist",
+        "rootDir": "src"
+    },
+    "include": [
+        "src/**/*"
+    ]
+}
+</file>
+
+</files>
