@@ -8,10 +8,15 @@
 //   4. Expose GET /api/check so the UI can verify the key works
 // ============================================================
 
-import "dotenv/config"; // loads .env automatically
-import express from "express";
+import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, "../", ".env") });
+
+import express from "express";
 import { runAgent, type Message } from "./agent.js";
 import {
   listConversations,
@@ -20,8 +25,7 @@ import {
   deleteConversation,
 } from "./memory.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
+console.log(process.env);
 const app = express();
 const PORT = 3000;
 

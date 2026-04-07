@@ -2,17 +2,21 @@
 // 🌐 server.ts — RAG Agent Server (port 3003)
 // ============================================================
 
-import "dotenv/config";
-import express from "express";
+import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, "../", ".env") });
+
+import express from "express";
 import fs from "fs";
 import multer from "multer";
 import { buildIndex, askWithRAG, getIndexedDocs } from "./rag.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
-const PORT = 3003;
+const PORT = 3002;
 const DOCS_DIR = path.join(__dirname, "./docs");
 
 app.use(express.json());

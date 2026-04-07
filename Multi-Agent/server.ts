@@ -3,15 +3,18 @@
 // Runs on port 3002 (so it doesn't clash with your other project)
 // ============================================================
 
-import "dotenv/config";
-import express from "express";
+import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, "../", ".env") });
+import express from "express";
 import { orchestrate } from "./agents.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
-const PORT = 3002;
+const PORT = 3001;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "./public")));
